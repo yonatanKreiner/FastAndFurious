@@ -37,9 +37,12 @@ def __extract(video_full_path):
     motion = MotionDetectionExtractor()
     frames = FramesCompareExtractor()
 
+    features_list.(motion.extract(video_full_path))
+    features_list.append(motion.extract(video_full_path))
+    features_list.append(motion.extract(video_full_path))
+    features_list.append(motion.extract(video_full_path))
     features_list.append(motion.extract(video_full_path))
     features_list.append(frames.extract(video_full_path))
-    features_list.append(optical_flow.dense_optical_flow(video_full_path))
 
     return features_list
  
