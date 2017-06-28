@@ -21,9 +21,7 @@ class FramesCompareExtractor():
 		frames_counter = 0
 		while cap.isOpened():
 			ret, next_frame = cap.read()
-<<<<<<< HEAD
-			next_frame = cv2.cvtColor(prev_frame, cv2.COLOR_BGR2GRAY)
-=======
+
 			if not ret:
 				break
 			next_frame = cv2.cvtColor(next_frame, cv2.COLOR_BGR2GRAY)
@@ -34,8 +32,7 @@ class FramesCompareExtractor():
 
 			prev_frame = next_frame
 			frames_counter += 1
->>>>>>> ac9b8584f7799294c1f551b54d2537978f7d8b09
-
+			
 		cap.release()
 		cv2.destroyAllWindows()
 		
