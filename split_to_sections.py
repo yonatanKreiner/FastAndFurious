@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 import hashlib
 import os
+import utils
 
 class SectionsSplitter():
     def __create_files(self, source):
@@ -23,7 +24,7 @@ class SectionsSplitter():
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
 
         for filename in files:
-            writer = cv2.VideoWriter(filename, fourcc, 29.0, (self.split_width_size, self.split_height_size))
+            writer = cv2.VideoWriter(filename, fourcc, utils.get_fps(filename), (self.split_width_size, self.split_height_size))
             writers.append(writer)
         return writers
 
@@ -71,6 +72,8 @@ class SectionsSplitter():
 
         self.cap.release()
         cv2.destroyAllWindows()
+
+        print("{} - finished to split sections".format(file_to_split))
 
         new_file_name = file_to_split[:file_to_split.index('.')] + '_' + str(self.num_of_splits * num_of_splits) + '.avi'
         os.rename(file_to_split, new_file_name)
