@@ -4,19 +4,17 @@ import hashlib
 import os
 
 class SectionsSplitter():
-    def __init__(self, repository_path):
-        self.repository_path = repository_path
-
     def __create_files(self, source):
         files = []
-        b_source = bytearray()
-        b_source.extend(source)
-        file_hash = hashlib.md5(b_source).hexdigest()
+        index_of_dot = source.index('.')
+        file_name_without_extension = source[:index_of_dot]
+        # b_source = bytearray()
+        # b_source.extend(source)
+        # file_hash = hashlib.md5(b_source).hexdigest()
 
         for i in xrange(self.num_of_splits * self.num_of_splits):
-            filename = file_hash + '-' + str(i) + '.avi'
-            full_file_path = os.path.join(self.repository_path, filename)
-            files.append(full_file_path)
+            filename = file_name_without_extension + '_' + str(i) + '.avi'
+            files.append(filename)
         return files
 
     def __create_writers(self, files):
@@ -74,9 +72,13 @@ class SectionsSplitter():
         self.cap.release()
         cv2.destroyAllWindows()
 
+        new_file_name = file_to_split[:file_to_split.index('.')] + '_' + str(self.num_of_splits * num_of_splits) + '.avi'
+        os.rename(file_to_split, new_file_name)
+        files.append(new_file_name)
+
         return files
 
 if __name__ == "__main__":
-    section_splitter =  SectionsSplitter(r"C:\repo")
+    section_splitter =  SectionsSplitter()
 
     print(section_splitter.split(r"C:\videos\1.avi", num_of_splits=5))
