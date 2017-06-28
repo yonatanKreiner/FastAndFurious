@@ -1,6 +1,8 @@
 import os
 import csv
 import features_extractors
+import optical_flow
+from dateutil import parser
 
 def create_csv(videos_path, output_file, timestamps):
     out_file = open(output_file, "wb")
@@ -12,7 +14,10 @@ def create_csv(videos_path, output_file, timestamps):
         section_id = os.path.splitext(section_id)[0]
 
         row[video_id, section_id]
-        row.append(timestamps[video_id] + offset)
+
+        date = parser.parse(timestamps[video_id])
+        date += datetime.timedelta(seconds=offset)
+        row.append(date)
 
         features = __extract(os.path.join(videos_path, video))
         row.append(features)
@@ -25,14 +30,14 @@ def __extract(video_full_path):
     features_list = []
 
     motion = MotionDetectionExtractor()
-    motion = MotionDetectionExtractor()
-    motion = MotionDetectionExtractor()
-    motion = MotionDetectionExtractor()
+    frames = FramesCompareExtractor()
 
     features_list.(motion.extract(video_full_path))
     features_list.append(motion.extract(video_full_path))
     features_list.append(motion.extract(video_full_path))
     features_list.append(motion.extract(video_full_path))
+    features_list.append(motion.extract(video_full_path))
+    features_list.append(frames.extract(video_full_path))
 
     return features_list
  

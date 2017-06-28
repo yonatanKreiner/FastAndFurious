@@ -1,5 +1,6 @@
 {
-    "videos_path": "C:/data/hackathon/",
+    "videos_path": "D:\\data\\hackathon",
+    "output_path": "D:\\data\\solution",
     "output_csv": "output.csv",
     "sections_number": "4",
     "video_time_frame" : "10",

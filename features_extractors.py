@@ -1,7 +1,5 @@
 import numpy as np
 import cv2
-from skimage.measure import compare_ssim
-
 
 class FramesCompareExtractor():
 	def __init__(self):
@@ -23,6 +21,7 @@ class FramesCompareExtractor():
 		frames_counter = 0
 		while cap.isOpened():
 			ret, next_frame = cap.read()
+
 			if not ret:
 				break
 			next_frame = cv2.cvtColor(next_frame, cv2.COLOR_BGR2GRAY)
@@ -33,7 +32,7 @@ class FramesCompareExtractor():
 
 			prev_frame = next_frame
 			frames_counter += 1
-
+			
 		cap.release()
 		cv2.destroyAllWindows()
 		
