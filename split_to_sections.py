@@ -9,22 +9,19 @@ class SectionsSplitter():
         files = []
         index_of_dot = source.index('.')
         file_name_without_extension = source[:index_of_dot]
-        # b_source = bytearray()
-        # b_source.extend(source)
-        # file_hash = hashlib.md5(b_source).hexdigest()
 
         for i in xrange(self.num_of_splits * self.num_of_splits):
             filename = file_name_without_extension + '_' + str(i) + '.avi'
             files.append(filename)
         return files
 
-    def __create_writers(self, files):
+    def __create_writers(self, files, source):
         writers = []
 
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
 
         for filename in files:
-            writer = cv2.VideoWriter(filename, fourcc, utils.get_fps(filename), (self.split_width_size, self.split_height_size))
+            writer = cv2.VideoWriter(filename, fourcc, utils.get_fps(source), (self.split_width_size, self.split_height_size))
             writers.append(writer)
         return writers
 
@@ -50,7 +47,7 @@ class SectionsSplitter():
 
         files = self.__create_files(file_to_split)
 
-        writers = self.__create_writers(files)
+        writers = self.__create_writers(files, file_to_split)
 
         while(self.cap.isOpened()):
             ret, frame = self.cap.read()
@@ -84,4 +81,4 @@ class SectionsSplitter():
 if __name__ == "__main__":
     section_splitter =  SectionsSplitter()
 
-    print(section_splitter.split(r"C:\videos\1\1\1_40.avi"))
+    print(section_splitter.split(r"C:\videos\1\2\2_0.avi"))
