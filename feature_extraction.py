@@ -1,9 +1,9 @@
 import os
 import datetime
 import csv
-import features_extractors
 import optical_flow
 from dateutil import parser
+from features_extractors import *
 
 def create_csv(videos_path, output_file, timestamps):
     out_file = open(output_file, "wb")
@@ -12,6 +12,9 @@ def create_csv(videos_path, output_file, timestamps):
 
     for directory in os.listdir(videos_path):
         dir_path = os.path.join(videos_path, directory)
+
+        out_file = open(output_file, "ab")
+        writer = csv.writer(out_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
 
         if os.path.isdir(dir_path):
             for video in os.listdir(dir_path):
@@ -25,24 +28,17 @@ def create_csv(videos_path, output_file, timestamps):
                 row.append(str(date))
 
                 features = __extract(os.path.join(dir_path, video))
-                row.append(features)
+                row.extend(features)
 
-                writer.writerow(video_id)
-    
-    out_file.close()
+                writer.writerow(row)
+        out_file.close()
 
 def __extract(video_full_path):
     features_list = []
 
     motion = MotionDetectionExtractor()
-    frames = FramesCompareExtractor()
 
-    features_list.(motion.extract(video_full_path))
-    features_list.append(motion.extract(video_full_path))
-    features_list.append(motion.extract(video_full_path))
-    features_list.append(motion.extract(video_full_path))
-    features_list.append(motion.extract(video_full_path))
-    features_list.append(frames.extract(video_full_path))
+    features_list.extend(motion.extract(video_full_path))
 
     return features_list
  
