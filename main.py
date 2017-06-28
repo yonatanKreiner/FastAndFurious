@@ -2,21 +2,30 @@ import os
 import video_splitter
 import split_to_sections
 import feature_extraction
+import utils
 
-def __load_config_file(file_path):
-    with open(file_path) as config_file:   
-        return json.load(config_file, encoding='utf-8')
+config_file = utils.load_config_file('videos_config.json')
 
-config_file = __load_config_file('videos_config.json')
+videos_path = config_file['videos_path']
+output_path = config_file['output_path']
+video_frame_rate = int(config_file['video_time_frame'])
 
-videos_path = config_file[videos_path]
-splitter = SectionsSplitter()
+splitter = split_to_sections.SectionsSplitter()
 
-for video in os.listdir(videos_path):
-    splitter.split(os.path.join(videos_path, video))
+for video_id, video_name in enumerate(os.listdir(videos_path)):
+    video_full_name = os.path.join(videos_path, video_name)
 
-feature_extraction.create_csv(videos_path, config_file[output_csv], config_file[timestamps])
+    if not os.path.isfile(video_full_name):
+        continue
+    
+    video_id = str(video_id)
+    output_full_path = os.path.join(output_path, video_id)
+    video_splitter.split_video(video_id, video_full_name, output_full_path, video_frame_rate)
+    import time
+    for splitted_video_name in os.listdir(output_full_path):
+        splitted_video_path = os.path.join(output_full_path, splitted_video_name)
+        splitter.split(splitted_video_path)
+        time.sleep(5)
 
-video_full_name = os.path.join(video_path, video_name)
-output_path = os.path.join(video_path,os.path.splitext(video_name)[0])
+feature_extraction.create_csv(videos_path, config_file['output_csv'], config_file['timestamps'])
 

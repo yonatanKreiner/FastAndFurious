@@ -178,7 +178,3 @@ def lk_optical_flow(VIDEO_PATH):
     cv2.destroyAllWindows()
     cap.release()
     
-
-VIDEO_PATH = r"C:\Users\Tom\Desktop\Hackaton\3.avi"
-dense_optical_flow(VIDEO_PATH)
-#lk_optical_flow(VIDEO_PATH)
