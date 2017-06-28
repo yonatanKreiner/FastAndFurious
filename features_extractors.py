@@ -40,11 +40,11 @@ class FramesCompareExtractor():
 
 
 class MotionDetectionExtractor():
-	def __dense_optical_flow(self, VIDEO_PATH, threshold_1=1.5, threshold_2=50):
+	def __dense_optical_flow(self, VIDEO_PATH, threshold_1=1.5, threshold_2=50, threshold_3=5):
 		cap = cv2.VideoCapture(VIDEO_PATH)
 		ret, frame1 = cap.read()
-		prvs = cv2.cvtColor(frame1,cv2.COLOR_BGR2GRAY)
-		grayscale = np.zeros_like(prvs)
+		prev_frame = cv2.cvtColor(frame1,cv2.COLOR_BGR2GRAY)
+		grayscale = np.zeros_like(prev_frame)
 		grayscale[...] = 0
 		moved_frames = 0
 		total_frames = 0
@@ -55,21 +55,22 @@ class MotionDetectionExtractor():
 				break
 			total_frames += 1
 
-			next = cv2.cvtColor(frame2,cv2.COLOR_BGR2GRAY)
-			flow = cv2.calcOpticalFlowFarneback(prvs,next, None, 0.5, 3, 15, 3, 5, 1.2, 0)
-			mag, ang = cv2.cartToPolar(flow[...,0], flow[...,1])
+			if total_frames % threshold_3 == 0:
+				next_frame = cv2.cvtColor(frame2,cv2.COLOR_BGR2GRAY)
+				flow = cv2.calcOpticalFlowFarneback(prev_frame,next_frame, None, 0.5, 3, 15, 3, 5, 1.2, 0)
+				mag, ang = cv2.cartToPolar(flow[...,0], flow[...,1])
 
-			num_of_moving_pixels = len(mag[mag > threshold_1])
-			if num_of_moving_pixels > threshold_2:
-				moved_frames +=1
-			
-			prvs = next
+				num_of_moving_pixels = len(mag[mag > threshold_1])
+				if num_of_moving_pixels > threshold_2:
+					moved_frames +=1
+				
+				prev_frame = next_frame
 		cap.release()
 		cv2.destroyAllWindows()
 		
-		print([float(moved_frames) / float(total_frames)])
+		print([float(moved_frames) / float(total_frames / threshold_3)])
 
-		return [float(moved_frames) / float(total_frames)]
+		return [float(moved_frames) / float(total_frames / threshold_3)]
 
 	def get_features_names(self):
 		return "is_motion"
@@ -81,6 +82,6 @@ class MotionDetectionExtractor():
 if __name__ == "__main__":
 	extractor = MotionDetectionExtractor()
 	for i in xrange(16):
-		print(extractor.extract(r"C:\videos\1\4\4_0_" + str(i) + ".avi"))
+		extractor.extract(r"C:\videos\1\1\1_40_" + str(i) + ".avi")
 	# feature_extractor = FramesCompareExtractor()
 	# feature_extractor.extract(r"C:\videos\1.avi")
