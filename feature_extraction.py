@@ -1,4 +1,5 @@
 import os
+import datetime
 import csv
 import features_extractors
 import optical_flow
@@ -6,23 +7,27 @@ from dateutil import parser
 
 def create_csv(videos_path, output_file, timestamps):
     out_file = open(output_file, "wb")
-    writer = csv.writer(out_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_NONE)
-    writer.writerow('video_id,section_id,timestamp,movement')
+    writer = csv.writer(out_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+    writer.writerow(['video_id', 'section_id', 'timestamp', 'movement'])
 
-    for video in os.listdir(videos_path):
-        video_id, offset, section_id = video.split('_')
-        section_id = os.path.splitext(section_id)[0]
+    for directory in os.listdir(videos_path):
+        dir_path = os.path.join(videos_path, directory)
 
-        row[video_id, section_id]
+        if os.path.isdir(dir_path):
+            for video in os.listdir(dir_path):
+                video_id, offset, section_id = video.split('_')
+                section_id = os.path.splitext(section_id)[0]
 
-        date = parser.parse(timestamps[video_id])
-        date += datetime.timedelta(seconds=offset)
-        row.append(date)
+                row = [video_id, section_id]
 
-        features = __extract(os.path.join(videos_path, video))
-        row.append(features)
+                date = parser.parse(timestamps[video_id])
+                date += datetime.timedelta(seconds=int(offset))
+                row.append(str(date))
 
-        writer.writerow(video_id)
+                features = __extract(os.path.join(dir_path, video))
+                row.append(features)
+
+                writer.writerow(video_id)
     
     out_file.close()
 

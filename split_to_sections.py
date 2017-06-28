@@ -23,7 +23,7 @@ class SectionsSplitter():
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
 
         for filename in files:
-            writer = cv2.VideoWriter(filename, fourcc, 20.0, (self.split_width_size, self.split_height_size))
+            writer = cv2.VideoWriter(filename, fourcc, 29.0, (self.split_width_size, self.split_height_size))
             writers.append(writer)
         return writers
 
