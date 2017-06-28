@@ -81,4 +81,4 @@ class SectionsSplitter():
 if __name__ == "__main__":
     section_splitter =  SectionsSplitter()
 
-    print(section_splitter.split(r"C:\videos\1.avi", num_of_splits=5))
+    print(section_splitter.split(r"C:\videos\1\1_0.avi"))
