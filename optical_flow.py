@@ -9,36 +9,121 @@ import numpy as np
 import cv2
 
 
-def dense_optical_flow(VIDEO_PATH, th=1):
+def dense_optical_flow(VIDEO_PATH, num_of_frames=20, th=1):
     cap = cv2.VideoCapture(VIDEO_PATH)
+    ret, frame1 = cap.read()
     ret, frame1 = cap.read()
     prvs = cv2.cvtColor(frame1,cv2.COLOR_BGR2GRAY)
     grayscale = np.zeros_like(prvs)
     grayscale[...] = 0
-    while(1):
+    f_movement = []
+    f_num_of_elements = []
+    for i in range(num_of_frames - 2):
         ret, frame2 = cap.read()
         next = cv2.cvtColor(frame2,cv2.COLOR_BGR2GRAY)
         flow = cv2.calcOpticalFlowFarneback(prvs,next, None, 0.5, 3, 15, 3, 5, 1.2, 0)
         mag, ang = cv2.cartToPolar(flow[...,0], flow[...,1])
         mag[mag < th] = 0
-#        hsv[...,0] = ang*180/np.pi/2
-#        hsv[...,2] = cv2.normalize(mag,None,0,255,cv2.NORM_MINMAX)
-#        bgr = cv2.cvtColor(hsv,cv2.COLOR_HSV2BGR)
-        cv2.imshow('original',frame2)
+        mag[mag >= th] = 255
+        dilation = cv2.dilate(mag.astype(np.uint8),np.ones((15,15),np.uint8),iterations = 1)
+        erosion = cv2.erode(dilation,np.ones((30,30),np.uint8),iterations = 1)
+        moving_elements = cv2.connectedComponents(erosion, 8, cv2.CV_32S)
+        is_movement = 0
+        if moving_elements[0] > 0:
+            is_movement = 1
+        f_movement.append(is_movement)
+        f_num_of_elements.append(moving_elements[0])
+#        cv2.imshow('original',frame2)
 #        cv2.resizeWindow('original', 1200,720)
-        cv2.imshow('optical_flow',mag)
+#        cv2.imshow('optical_flow',mag)
+#        cv2.imshow('optical_flow2',erosion.astype(np.float32))
 #        cv2.resizeWindow('optical_flow', 1200,720)
-
-        k = cv2.waitKey(30) & 0xff
-        if k == 27:
-            break
-        elif k == ord('s'):
-            cv2.imwrite('opticalfb.png',frame2)
-            cv2.imwrite('opticalhsv.png',bgr)
         prvs = next
+        if int(i/(num_of_frames - 2)*100) % 20 == 0:
+            print(int(i/(num_of_frames - 2)*100), '% Done')
+    
+
     cap.release()
     cv2.destroyAllWindows()
+    features = []
+    features.append(np.round(np.average(f_movement)))
+    features.append(np.round(np.average(f_num_of_elements)))
+    print(features)
+    return features
 
+def dense_optical_flow_lk(VIDEO_PATH, num_of_frames=20, th=1):
+    cap = cv2.VideoCapture(VIDEO_PATH)
+    
+    ret, frame1 = cap.read()
+    ret, frame1 = cap.read()
+    prvs = cv2.cvtColor(frame1,cv2.COLOR_BGR2GRAY)
+    grayscale = np.zeros_like(prvs)
+    
+    #Lucas-Kanade Optical Flow in OpenCV
+    
+    # params for ShiTomasi corner detection
+    feature_params = dict( maxCorners = 100,
+                           qualityLevel = 0.3,
+                           minDistance = 7,
+                           blockSize = 7 )
+    
+    # Parameters for lucas kanade optical flow
+    lk_params = dict( winSize  = (15,15),
+                      maxLevel = 2,
+                      criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
+
+    # Create some random colors
+    color = np.random.randint(0,255,(100,3))
+      
+    # Take first frame and find corners in it
+    p0 = cv2.goodFeaturesToTrack(prvs, mask = None, **feature_params)
+    
+    # Create a mask image for drawing purposes
+    mask = np.zeros_like(frame1)
+    
+    
+
+    grayscale[...] = 0
+    f_movement = []
+    f_num_of_elements = []
+    for i in range(num_of_frames - 2):
+        ret, frame2 = cap.read()
+        next = cv2.cvtColor(frame2,cv2.COLOR_BGR2GRAY)
+        
+        # calculate optical flow
+        p1, st, err = cv2.calcOpticalFlowPyrLK(prvs, next, p0, None, **lk_params)
+        
+        
+        
+        flow = cv2.calcOpticalFlowFarneback(prvs,next, None, 0.5, 3, 15, 3, 5, 1.2, 0)
+        mag, ang = cv2.cartToPolar(flow[...,0], flow[...,1])
+        mag[mag < th] = 0
+        mag[mag >= th] = 255
+        dilation = cv2.dilate(mag.astype(np.uint8),np.ones((15,15),np.uint8),iterations = 1)
+        erosion = cv2.erode(dilation,np.ones((30,30),np.uint8),iterations = 1)
+        moving_elements = cv2.connectedComponents(erosion, 8, cv2.CV_32S)
+        is_movement = 0
+        if moving_elements[0] > 0:
+            is_movement = 1
+        f_movement.append(is_movement)
+        f_num_of_elements.append(moving_elements[0])
+#        cv2.imshow('original',frame2)
+#        cv2.resizeWindow('original', 1200,720)
+#        cv2.imshow('optical_flow',mag)
+#        cv2.imshow('optical_flow2',erosion.astype(np.float32))
+#        cv2.resizeWindow('optical_flow', 1200,720)
+        prvs = next
+        if int(i/(num_of_frames - 2)*100) % 20 == 0:
+            print(int(i/(num_of_frames - 2)*100), '% Done')
+    
+
+    cap.release()
+    cv2.destroyAllWindows()
+    features = []
+    features.append(np.round(np.average(f_movement)))
+    features.append(np.round(np.average(f_num_of_elements)))
+    print(features)
+    return features
         
         
 def lk_optical_flow(VIDEO_PATH):
