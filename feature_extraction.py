@@ -29,7 +29,7 @@ def __extract(video_full_path):
     motion = MotionDetectionExtractor()
     motion = MotionDetectionExtractor()
 
-    features_list.append(motion.extract(video_full_path))
+    features_list.(motion.extract(video_full_path))
     features_list.append(motion.extract(video_full_path))
     features_list.append(motion.extract(video_full_path))
     features_list.append(motion.extract(video_full_path))

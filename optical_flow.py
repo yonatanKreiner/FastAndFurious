@@ -9,7 +9,7 @@ import numpy as np
 import cv2
 
 
-def dense_optical_flow(VIDEO_PATH, num_of_frames=20, th=1):
+def dense_optical_flow(VIDEO_PATH, num_of_frames=500, th=1):
     cap = cv2.VideoCapture(VIDEO_PATH)
     ret, frame1 = cap.read()
     ret, frame1 = cap.read()
@@ -39,8 +39,8 @@ def dense_optical_flow(VIDEO_PATH, num_of_frames=20, th=1):
 #        cv2.imshow('optical_flow2',erosion.astype(np.float32))
 #        cv2.resizeWindow('optical_flow', 1200,720)
         prvs = next
-        if int(i/(num_of_frames - 2)*100) % 20 == 0:
-            print(int(i/(num_of_frames - 2)*100), '% Done')
+        # if int(i/(num_of_frames - 2)*100) % 20 == 0:
+        #     print(str(int(i/(num_of_frames - 2)*100)) + '% Done')
     
 
     cap.release()
@@ -48,7 +48,7 @@ def dense_optical_flow(VIDEO_PATH, num_of_frames=20, th=1):
     features = []
     features.append(np.round(np.average(f_movement)))
     features.append(np.round(np.average(f_num_of_elements)))
-    print(features)
+    # print(features)
     return features
 
 def dense_optical_flow_lk(VIDEO_PATH, num_of_frames=20, th=1):
@@ -179,6 +179,6 @@ def lk_optical_flow(VIDEO_PATH):
     cap.release()
     
 
-VIDEO_PATH = r"C:\Users\Tom\Desktop\Hackaton\3.avi"
-dense_optical_flow(VIDEO_PATH)
+# VIDEO_PATH = r"C:\Users\Tom\Desktop\Hackaton\3.avi"
+# dense_optical_flow(VIDEO_PATH)
 #lk_optical_flow(VIDEO_PATH)
