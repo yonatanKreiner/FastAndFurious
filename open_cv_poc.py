@@ -3,7 +3,7 @@
 import numpy as np
 import cv2
 
-cap = cv2.VideoCapture(r"C:\videos\1.avi")
+cap = cv2.VideoCapture(r"D:\data\האקתון\1.avi")
 
 # take first frame of the video
 ret,frame = cap.read()
