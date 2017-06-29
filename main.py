@@ -19,7 +19,7 @@ for video_id, video_name in enumerate(os.listdir(videos_path)):
         continue
     
     output_full_path = os.path.join(output_path, str(video_id))
-    #video_splitter.split_video(video_id, video_full_name, output_full_path, video_frame_rate)
+    video_splitter.split_video(video_id, video_full_name, output_full_path, video_frame_rate)
 
     for splitted_video_name in os.listdir(output_full_path):
         splitted_video_path = os.path.join(output_full_path, splitted_video_name)
